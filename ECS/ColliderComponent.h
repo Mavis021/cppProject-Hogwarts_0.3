@@ -21,6 +21,8 @@ public:
 			entity->addComponent<TransformComponent>();
 		}
 		transform = &entity->getComponent<TransformComponent>(); //program will crash if we havent added a transform component
+
+		Game::colliders.push_back(this);
 	}
 	void update()override
 	{
