@@ -17,10 +17,14 @@ public:
 	TransformComponent()
 	{
 		position.Zero();
+
 	}
 	TransformComponent(int sc)
 	{
-		position.Zero();
+		//position.Zero();
+		//placing the player in the desired place 
+		position.x = 100;
+		position.y = 100;
 		scale = sc;
 	}
 	TransformComponent(float x, float y)
@@ -42,8 +46,10 @@ public:
 	}
 	void update() override
 	{
-		position.x += velocity.x * speed;
-		position.y += velocity.y * speed;
+
+		//not updating players position instead scrolling the background
+		//position.x += velocity.x * speed;
+		//position.y += velocity.y * speed;
 	}
 
 };

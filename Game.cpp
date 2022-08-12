@@ -9,13 +9,17 @@
 Map* map;
 Manager manager;
 
-SDL_Renderer* Game::renderer = nullptr;
+SDL_Renderer* Game::renderer = nullptr;            //we can reassign
 SDL_Event Game::event;
 
 std::vector<ColliderComponent*> Game::colliders;
 
-auto& Player(manager.addEntity());
+
+auto& Player(manager.addEntity());  //creating our player
+auto& Enemy(manager.addEntity());   //creating our enemy
 auto& wall(manager.addEntity());
+
+const char* mapfile = "gameLoop/dev/map_tile.png";
 
 enum groupLables : std::size_t
 {
@@ -24,6 +28,11 @@ enum groupLables : std::size_t
 	groupEnemies,
 	groupColliders
 };
+
+
+auto& tiles(manager.getGroup(groupMap));
+auto& Players(manager.getGroup(groupPlayers));
+auto& enimies(manager.getGroup(groupEnemies));
 
 Game::Game()
 {}
@@ -51,17 +60,26 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 
 		isRunning = true;
 	}
-
-	map = new Map();
-
-	Map::LoadMap("dev/pixel_16x16.map", 16, 16);
-
-	Player.addComponent<TransformComponent>(3);   //player component render
-	Player.addComponent<SpriteComponent>("dev/player_anims.png",true);
+	
+		map = new Map();
+		for (int i = 0; i < 2; i++)
+		{
+			Map::LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, i);
+		}
+	
+		//player
+	Player.addComponent<TransformComponent>(100,100,32,32,2);   //player component render
+	Player.addComponent<SpriteComponent>("gameLoop/gfx/harryfly32-3.png",true);
 	Player.addComponent<KeyboardComtroller>();
 	Player.addComponent<ColliderComponent>("Player");
-
 	Player.addGroup(groupPlayers);
+
+	//enemy
+	Enemy.addComponent<TransformComponent>(200,448,32,32,3);   //enemy component render
+	Enemy.addComponent<SpriteComponent>("gameLoop/gfx/deathEater2.png", true);
+	Enemy.addComponent<KeyboardComtroller>();
+	Enemy.addComponent<ColliderComponent>("Enemy");
+	Enemy.addGroup(groupEnemies);
 
 	//wall.addComponent <TransformComponent>(100.0f, 300.0f, 300, 20, 1);
 	//wall.addComponent<SpriteComponent>("dev/water.png");
@@ -88,6 +106,17 @@ void Game::update()
 	manager.refresh();
 	manager.update();
 
+	//backround moving 
+	Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
+	int pSpeed = Player.getComponent<TransformComponent>().speed;
+
+	for (auto t : tiles)
+	{
+		t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
+		//t->getComponent<TileComponent>().destRect.y += -1;//-()
+	}
+
+
 	//if (Collision::AABB(Player.getComponent<ColliderComponent>().collider,
 	//	wall.getComponent<ColliderComponent>().collider))
 	//{
@@ -95,7 +124,7 @@ void Game::update()
 	//	Player.getComponent<TransformComponent>().velocity * -1;
 	//	std::cout << "wall hit!" << std::endl;
 	//}
-	std::cout << Player.getComponent < TransformComponent>().position.x << " , " << Player.getComponent < TransformComponent>().position.y << std::endl;
+	std::cout << Enemy.getComponent < TransformComponent>().position.x << " , " << Enemy.getComponent < TransformComponent>().position.y << std::endl;
 
 	//for (auto cc : colliders)
 	//{
@@ -103,9 +132,6 @@ void Game::update()
 	//}
 }
 
-auto& tiles(manager.getGroup(groupMap));
-auto& Players(manager.getGroup(groupPlayers));
-auto& enimies(manager.getGroup(groupEnemies));
 
 void Game::render()
 {
@@ -133,9 +159,17 @@ void Game::clean()
 	SDL_Quit();
 }
 
-void Game::addTile(int id, int x, int y)
+void Game::addTile(int srcX,int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(x,y,32,32,id);
+	tile.addComponent<TileComponent>(srcX,srcY,xpos,ypos,mapfile);
 	tile.addGroup(groupMap);
 }
+
+//single tile component system
+//void Game::addTile(int id, int x, int y)
+//{
+//	auto& tile(manager.addEntity());
+//	tile.addComponent<TileComponent>(x,y,64,64,id);
+//	tile.addGroup(groupMap);
+//}
