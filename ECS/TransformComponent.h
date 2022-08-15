@@ -44,12 +44,10 @@ public:
 	{
 		velocity.Zero();
 	}
-	void update() override
+	void update() override  //updating the component position 
 	{
-
-		//not updating players position instead scrolling the background
-		//position.x += velocity.x * speed;
-		//position.y += velocity.y * speed;
+		position.x+= velocity.x * speed;
+		position.y+= velocity.y * speed;
 	}
 
 };

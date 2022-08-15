@@ -13,8 +13,10 @@ public:
 	Game();
 	~Game();
 
+	bool check = true;
 	void init(const char* title, int width, int height, bool fullscreen);
 
+	
 	void handleEvents();
 	void update();
 	bool running() { return isRunning; }

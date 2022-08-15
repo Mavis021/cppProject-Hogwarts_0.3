@@ -122,7 +122,7 @@ public:
 		std::unique_ptr<Component> uPtr{ c };
 		components.emplace_back(std::move(uPtr));
 
-		componentArray[getComponentTypeID<T>()] = c;//ensure that the component type will always be put in the same position
+		componentArray[getComponentTypeID<T>()] = c;//ensure that the component type will always be put in the same position in the array
 		componentBitSet[getComponentTypeID<T>()] = true;
 
 		c->init();

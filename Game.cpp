@@ -8,16 +8,15 @@
 
 Map* map;
 Manager manager;
-
+int hit;
 SDL_Renderer* Game::renderer = nullptr;            //we can reassign
 SDL_Event Game::event;
-
 std::vector<ColliderComponent*> Game::colliders;
 
 
 auto& Player(manager.addEntity());  //creating our player
 auto& Enemy(manager.addEntity());   //creating our enemy
-auto& wall(manager.addEntity());
+auto& ball(manager.addEntity());    //creating our magic ball
 
 const char* mapfile = "gameLoop/dev/map_tile.png";
 
@@ -33,6 +32,7 @@ enum groupLables : std::size_t
 auto& tiles(manager.getGroup(groupMap));
 auto& Players(manager.getGroup(groupPlayers));
 auto& enimies(manager.getGroup(groupEnemies));
+auto& balls(manager.getGroup(groupColliders));
 
 Game::Game()
 {}
@@ -62,29 +62,30 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	}
 	
 		map = new Map();
-		for (int i = 0; i < 2; i++)
+
+		for (int i = 0; i < 3; i++)
 		{
-			Map::LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, i);
+			map->LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, i);
 		}
 	
-		//player
+	//player
 	Player.addComponent<TransformComponent>(100,100,32,32,2);   //player component render
-	Player.addComponent<SpriteComponent>("gameLoop/gfx/harryfly32-3.png",true);
-	Player.addComponent<KeyboardComtroller>();
+	Player.addComponent<SpriteComponent>("gameLoop/gfx/harryfly1-4.png",true);
 	Player.addComponent<ColliderComponent>("Player");
 	Player.addGroup(groupPlayers);
 
 	//enemy
-	Enemy.addComponent<TransformComponent>(200,448,32,32,3);   //enemy component render
-	Enemy.addComponent<SpriteComponent>("gameLoop/gfx/deathEater2.png", true);
-	Enemy.addComponent<KeyboardComtroller>();
+	Enemy.addComponent<TransformComponent>(447,447,32,32,3);   //enemy component render
+	Enemy.addComponent<SpriteComponent>("gameLoop/gfx/deathEater2-4.png", true);
 	Enemy.addComponent<ColliderComponent>("Enemy");
 	Enemy.addGroup(groupEnemies);
 
-	//wall.addComponent <TransformComponent>(100.0f, 300.0f, 300, 20, 1);
-	//wall.addComponent<SpriteComponent>("dev/water.png");
-	//wall.addComponent<ColliderComponent>("Wall");
-	//wall.addGroup(groupMap);
+	//magicBall
+	ball.addComponent <TransformComponent>(150, 150, 32, 32, 1);
+	ball.addComponent<SpriteComponent>("gameloop/gfx/magicBall32.png",true);
+	ball.addComponent<KeyboardComtroller>();
+	ball.addComponent<ColliderComponent>("ball");
+	ball.addGroup(groupColliders);
 }
 
 void Game::handleEvents()
@@ -101,30 +102,39 @@ void Game::handleEvents()
 	}
 }
 
+
 void Game::update()
 {
 	manager.refresh();
 	manager.update();
-
 	//backround moving 
 	Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
 	int pSpeed = Player.getComponent<TransformComponent>().speed;
 
 	for (auto t : tiles)
 	{
-		t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
+
+			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
+			if (Collision::hitCount >= 3)
+			{
+				break;
+			}
+		
 		//t->getComponent<TileComponent>().destRect.y += -1;//-()
 	}
 
+	if (Collision::AABB(Enemy.getComponent<ColliderComponent>().collider,
+		ball.getComponent<ColliderComponent>().collider))
+	{
+		ball.getComponent<TransformComponent>().position.x = 150;
+		ball.getComponent<TransformComponent>().position.y = 150;
 
-	//if (Collision::AABB(Player.getComponent<ColliderComponent>().collider,
-	//	wall.getComponent<ColliderComponent>().collider))
-	//{
-	//	Player.getComponent<TransformComponent>().scale = 1;
-	//	Player.getComponent<TransformComponent>().velocity * -1;
-	//	std::cout << "wall hit!" << std::endl;
-	//}
-	std::cout << Enemy.getComponent < TransformComponent>().position.x << " , " << Enemy.getComponent < TransformComponent>().position.y << std::endl;
+		std::cout << "magic ball le lagyo enemy lai." << std::endl;
+		
+		//ball.destroy();
+	}
+
+	std::cout << ball.getComponent < TransformComponent>().position.x << " , " << ball.getComponent < TransformComponent>().position.y << std::endl;
 
 	//for (auto cc : colliders)
 	//{
@@ -149,6 +159,13 @@ void Game::render()
 		e->draw();
 	}
 
+	//if (check)
+	//{
+		for (auto& b : balls)
+		{
+			b->draw();
+		}
+	//}
 	SDL_RenderPresent(renderer);
 }
 

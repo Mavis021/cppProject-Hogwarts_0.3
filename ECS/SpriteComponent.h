@@ -33,13 +33,13 @@ public:
 	}
 	SpriteComponent(const char* path,bool isAnimated)
 	{
-		animated = true;
+		animated = isAnimated;
 
 		Animation idle = Animation(0, 4, 100);
-		//Animation walk = Animation(1, 8, 100);
+		Animation move = Animation(1, 5, 150);
 
 		animations.emplace("Idle", idle);
-		//animations.emplace("walk", walk);
+		animations.emplace("move", move);
 
 		Play("Idle");
 		setText(path);

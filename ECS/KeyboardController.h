@@ -10,12 +10,16 @@ public:
 	TransformComponent* transform;
 	SpriteComponent* sprite;
 
-
+	int pressCount=0;
+	
 	void init() override
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
+		pressCount = 1;
 	}
+
+
 
 	void update() override
 	{
@@ -23,23 +27,39 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_w:
-				transform->velocity.y = -1;
-				sprite->Play("walk");
+			case SDLK_k:
+				transform->velocity.y = 1;
+				transform->velocity.x = 1;
+				sprite->Play("move");
 				break;
 			case SDLK_a:
-				transform->velocity.x = -1;
-				sprite->Play("walk");
-				sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
+			{
+			
+					pressCount++;
+
+					if (pressCount % 2 == 0)
+					{
+						transform->velocity.x = 1;
+						transform->velocity.y = -1;
+					}
+					else
+					{
+						transform->velocity.x = -1;
+						transform->velocity.y = 1;
+					}
+
+				sprite->Play("move");
+				/*sprite->spriteFlip = SDL_FLIP_HORIZONTAL*/;
 				break;
-			case SDLK_d:
-				transform->velocity.x = 1;
-				sprite->Play("walk");
-				break;
-			case SDLK_s:
-				transform->velocity.y = 1;
-				sprite->Play("walk");
-				break;
+			}
+			//case SDLK_d:
+			//	transform->velocity.x = 1;
+			//	sprite->Play("move");
+			//	break;
+			//case SDLK_s:
+			//	transform->velocity.y = 1;
+			//	sprite->Play("move");
+			//	break;
 			default:
 				break;
 			}
@@ -48,23 +68,31 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_w:
-				transform->velocity.y = 0;
-				sprite->Play("Idle");
+			case SDLK_k:
+			{
+				if (transform->position.x == 153 && transform->position.y == 153)
+				{
+					transform->velocity.y = 0;
+					transform->velocity.x = 0;
+					pressCount = 1;
+					sprite->Play("move");
+				}
 				break;
+			}
 			case SDLK_a:
-				transform->velocity.x = 0;
-				sprite->Play("Idle");
-				sprite->spriteFlip = SDL_FLIP_NONE;
-				break;
-			case SDLK_d:
-				transform->velocity.x = 0;
-				sprite->Play("Idle");
-				break;
-			case SDLK_s:
 				transform->velocity.y = 0;
+				transform->velocity.x = 0;
 				sprite->Play("Idle");
+				//sprite->spriteFlip = SDL_FLIP_NONE;
 				break;
+			//case SDLK_d:
+			//	transform->velocity.x = 0;
+			//	sprite->Play("Idle");
+			//	break;
+			//case SDLK_s:
+			//	transform->velocity.y = 0;
+			//	sprite->Play("Idle");
+			//	break;
 			default:
 				break;
 
