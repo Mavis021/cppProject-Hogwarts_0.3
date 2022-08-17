@@ -9,7 +9,7 @@ Map::~Map()
 {
 }
 
-static int prevSize =0;
+static int prevSize =25;
 //coordinate system
 void Map::LoadMap(std::string path, int sizeX, int sizeY, int loop)
 {
@@ -24,10 +24,11 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY, int loop)
 		{
 			for (int x = 0; x < sizeX; x++)
 			{
-				if(loop<2)
-				xij = prevSize*loop + x;
-				else
-				xij = prevSize * loop + x-20;
+				////if(loop<2)
+				////xij = prevSize*loop + x;
+				////else
+				//xij = prevSize * loop + x-20;
+				xij = prevSize * loop + x;
 				mapFile.get(c);
 				srcY = atoi(&c) * 32;
 				mapFile.get(c);

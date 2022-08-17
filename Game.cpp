@@ -14,6 +14,12 @@ std::vector<ColliderComponent*> Game::colliders;
 int tempXball, tempYball;
 bool startMapMovement = false;
 bool ballMoving = false;
+bool mapBegin = true;
+
+SDL_Texture* Game:: StartEndTexture = nullptr;
+
+SDL_Rect srcStartEnd = { 0, 0, 300,640 };
+SDL_Rect destStartEnd = { 0, 0, 300,640 };//600=800-200 for xpos of dest rect
 
 
 auto& Player(manager.addEntity());  //creating our player
@@ -66,11 +72,11 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		map = new Map();
 		static int loop;
 		
-		for ( loop = 0; loop <3; loop++)
+		for ( loop = 0; loop <2; loop++)
 		{
-			if(loop==0)
+			/*if(loop==0)
 				map->LoadMap("gameLoop/dev/startEnd.map", 5, 10, loop);
-			else
+			else*/
 				map->LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, loop);
 		}
 	
@@ -87,8 +93,8 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	Enemy.addGroup(groupEnemies);
 
 	//magicBall
-	ball.addComponent <TransformComponent>(150, 150, 32, 32, 1);
-	ball.addComponent<SpriteComponent>("gameloop/gfx/magicBall32.png",true);
+	ball.addComponent <TransformComponent>(150, 150, 200, 200, 0.16);
+	ball.addComponent<SpriteComponent>("gameloop/gfx/powerball_200.png",true);
 	ball.addComponent<KeyboardComtroller>();
 	ball.addComponent<ColliderComponent>("ball");
 	ball.addGroup(groupColliders);
@@ -126,6 +132,10 @@ void Game::update()
 		if (startMapMovement == true)
 		{
 			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
+			if (t->getComponent<TileComponent>().destRect.x == 0)
+			{
+				mapBegin = true;
+			}
 		}
 
 			if (Collision::hitCount >= 3)
@@ -147,10 +157,22 @@ void Game::update()
 		ball.getComponent<ColliderComponent>().collider))
 	{
 		ballMoving = false;
+
+		if (Collision::hitCount == 1)
+		{
+			Enemy.getComponent<TransformComponent>().position.x = 467;
+			Enemy.getComponent<TransformComponent>().position.y = 427;
+		}
+		else
+		{
+			Enemy.getComponent<TransformComponent>().position.x = 447;
+			Enemy.getComponent<TransformComponent>().position.y = 447;
+		}
+
 		if (tempXball == 150 && tempYball == 150)
 		{
-			ball.getComponent<TransformComponent>().position.x = 170;
-			ball.getComponent<TransformComponent>().position.y = 130;
+			ball.getComponent<TransformComponent>().position.x = 130;
+			ball.getComponent<TransformComponent>().position.y = 170;
 			ball.getComponent<TransformComponent>().velocity.x = 0;
 			ball.getComponent<TransformComponent>().velocity.y = 0;
 		}
@@ -177,6 +199,17 @@ void Game::update()
 void Game::render()
 {
 	SDL_RenderClear(renderer);
+
+	StartEndTexture =TextureManager::LoadTexture("gameLoop/deva/startForest.png");
+	TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
+	if (updateCounter >= 1200)
+	{
+		destStartEnd.x = 600;
+		StartEndTexture = TextureManager::LoadTexture("gameLoop/gfx/endForest.png");
+		TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
+	}
+
+
 	for (auto& t : tiles)
 	{
 		t->draw();
@@ -210,7 +243,7 @@ void Game::clean()
 void Game::addTile(int srcX,int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(srcX,srcY,xpos,ypos,mapfile);
+	tile.addComponent<TileComponent>(srcX,srcY,xpos+300,ypos,mapfile);
 	tile.addGroup(groupMap);
 }
 

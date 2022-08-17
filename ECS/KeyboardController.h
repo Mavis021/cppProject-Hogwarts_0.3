@@ -8,6 +8,7 @@
 extern int tempXball, tempYball;
 extern bool startMapMovement;
 extern bool ballMoving;
+extern bool mapBegin;
 
 class KeyboardComtroller : public Component
 {
@@ -34,13 +35,17 @@ public:
 				break;
 			case SDLK_k:
 			{
-				if (startMapMovement == true)
+				if (startMapMovement == true && mapBegin == true)
 				{
 					ballMoving = true;
+					if (transform->velocity.x == 0 && transform->velocity.x == 0)
+					{
+						tempXball = transform->position.x;
+						tempYball = transform->position.y;
+					}
 					transform->velocity.y = 1;
 					transform->velocity.x = 1;
-					tempXball = transform->position.x;
-					tempYball = transform->position.y;
+
 					sprite->Play("Move");
 					break;
 				}
@@ -67,7 +72,7 @@ public:
 						transform->position.y = 170;
 					}
 
-					sprite->Play("Move");
+					sprite->Play("Idle");
 					break;
 				}
 			}
@@ -91,7 +96,7 @@ public:
 						transform->velocity.y = 0;
 						transform->velocity.x = 0;
 						pressCount = 0;
-						sprite->Play("Move");
+						sprite->Play("Idle");
 					}
 					break;
 				}
