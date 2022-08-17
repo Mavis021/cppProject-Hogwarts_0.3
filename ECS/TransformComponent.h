@@ -10,7 +10,7 @@ public:
 
 	int height = 32;
 	int width = 32;
-	int scale = 1;
+	float scale = 1;
 	int speed = 3;
 
 	
@@ -19,7 +19,7 @@ public:
 		position.Zero();
 
 	}
-	TransformComponent(int sc)
+	TransformComponent(float sc)
 	{
 		//position.Zero();
 		//placing the player in the desired place 
@@ -32,7 +32,7 @@ public:
 		position.x = x;
 		position.y = y;
 	}
-	TransformComponent(float x, float y,int h, int w, int sc)
+	TransformComponent(float x, float y,int h, int w, float sc)
 	{
 		position.x = x;
 		position.y = y;

@@ -36,10 +36,12 @@ public:
 		animated = isAnimated;
 
 		Animation idle = Animation(0, 4, 100);
-		Animation move = Animation(1, 5, 150);
+		Animation move = Animation(1, 4, 100);
+		Animation dead = Animation(2, 4, 100);
 
 		animations.emplace("Idle", idle);
-		animations.emplace("move", move);
+		animations.emplace("Move", move);
+		animations.emplace("Dead", dead);
 
 		Play("Idle");
 		setText(path);

@@ -4,6 +4,11 @@
 #include "ECS.h"
 #include "Components.h"
 
+
+extern int tempXball, tempYball;
+extern bool startMapMovement;
+extern bool ballMoving;
+
 class KeyboardComtroller : public Component
 {
 public:
@@ -24,51 +29,48 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_k:
-				transform->velocity.y = 1;
-				transform->velocity.x = 1;
-
-				sprite->Play("move");
+			case SDLK_KP_ENTER:
+				startMapMovement = true;
 				break;
+			case SDLK_k:
+			{
+				if (startMapMovement == true)
+				{
+					ballMoving = true;
+					transform->velocity.y = 1;
+					transform->velocity.x = 1;
+					tempXball = transform->position.x;
+					tempYball = transform->position.y;
+					sprite->Play("Move");
+					break;
+				}
+			}
 			case SDLK_a:
 			{
-			
+				if (startMapMovement == true && ballMoving == false)
+				{
 					pressCount++;
 
 					if (pressCount % 3 == 0)
 					{
 						transform->position.x = 170;
 						transform->position.y = 130;
-						//transform->velocity.x = 1;
-						//transform->velocity.y = -1;
 					}
 					else if (pressCount % 3 == 1)
 					{
 						transform->position.x = 150;
 						transform->position.y = 150;
-						//transform->velocity.x = 1;
-						//transform->velocity.y = -1;
 					}
 					else
 					{
 						transform->position.x = 130;
 						transform->position.y = 170;
-						//transform->velocity.x = -1;
-						//transform->velocity.y = 1;
 					}
 
-				sprite->Play("move");
-				/*sprite->spriteFlip = SDL_FLIP_HORIZONTAL*/;
-				break;
+					sprite->Play("Move");
+					break;
+				}
 			}
-			//case SDLK_d:
-			//	transform->velocity.x = 1;
-			//	sprite->Play("move");
-			//	break;
-			//case SDLK_s:
-			//	transform->velocity.y = 1;
-			//	sprite->Play("move");
-			//	break;
 			default:
 				break;
 			}
@@ -77,33 +79,34 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
+			case SDLK_KP_ENTER:
+				startMapMovement = true;
+				break;
 			case SDLK_k:
 			{
-				if (transform->position.x == 173 && transform->position.y == 133)
+				if (startMapMovement == true)
 				{
-					transform->velocity.y = 0;
-					transform->velocity.x = 0;
-					pressCount = 0;
-					sprite->Play("move");
+					if (transform->position.x == tempXball+3 && transform->position.y == tempYball+3)
+					{
+						transform->velocity.y = 0;
+						transform->velocity.x = 0;
+						pressCount = 0;
+						sprite->Play("Move");
+					}
+					break;
 				}
-				break;
 			}
 			case SDLK_a:
 			{
-				transform->velocity.y = 0;
-				transform->velocity.x = 0;
-				sprite->Play("Idle");
-				//sprite->spriteFlip = SDL_FLIP_NONE;
-				break;
+
+				if (startMapMovement == true&& ballMoving == false)
+				{
+					transform->velocity.y = 0;
+					transform->velocity.x = 0;
+					sprite->Play("Idle");
+					break;
+				}
 			}
-			//case SDLK_d:
-			//	transform->velocity.x = 0;
-			//	sprite->Play("Idle");
-			//	break;
-			//case SDLK_s:
-			//	transform->velocity.y = 0;
-			//	sprite->Play("Idle");
-			//	break;
 			default:
 				break;
 
