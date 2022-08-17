@@ -8,7 +8,7 @@
 
 Map* map;
 Manager manager;
-int hit;
+int mapEnd=0;
 SDL_Renderer* Game::renderer = nullptr;            //we can reassign
 SDL_Event Game::event;
 std::vector<ColliderComponent*> Game::colliders;
@@ -62,11 +62,17 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	}
 	
 		map = new Map();
-
-		for (int i = 0; i < 3; i++)
+		static int loop;
+		
+		for ( loop = 0; loop <4; loop++)
 		{
-			map->LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, i);
+			if(loop==0||loop==3)
+				map->LoadMap("gameLoop/dev/startEnd.map", 5, 10, loop);
+			else
+				map->LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, loop);
 		}
+
+		//mapEnd = 64*( 2 * 5 + (loop - 1) * 25);
 	
 	//player
 	Player.addComponent<TransformComponent>(100,100,32,32,2);   //player component render
@@ -107,34 +113,47 @@ void Game::update()
 {
 	manager.refresh();
 	manager.update();
+	updateCounter++;
 	//backround moving 
-	Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
-	int pSpeed = Player.getComponent<TransformComponent>().speed;
+	//Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
+	//int pSpeed = Player.getComponent<TransformComponent>().speed;
 
+	 //const int BGspeed= -2;
 	for (auto t : tiles)
 	{
 
 			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
+			
+
 			if (Collision::hitCount >= 3)
 			{
 				break;
 			}
-		
+			else if (updateCounter >= 1500)
+			{
+				Enemy.getComponent<TransformComponent>().velocity.x = 1;
+				break;
+			}
+			else
+				continue;
+
+			//std::cout << "and mapend = " << mapEnd << std::endl;
 		//t->getComponent<TileComponent>().destRect.y += -1;//-()
 	}
+
 
 	if (Collision::AABB(Enemy.getComponent<ColliderComponent>().collider,
 		ball.getComponent<ColliderComponent>().collider))
 	{
-		ball.getComponent<TransformComponent>().position.x = 150;
-		ball.getComponent<TransformComponent>().position.y = 150;
+		ball.getComponent<TransformComponent>().position.x = 170;
+		ball.getComponent<TransformComponent>().position.y = 130;
 
-		std::cout << "magic ball le lagyo enemy lai." << std::endl;
+		std::cout << "returning to initial position." << std::endl;
 		
 		//ball.destroy();
 	}
 
-	std::cout << ball.getComponent < TransformComponent>().position.x << " , " << ball.getComponent < TransformComponent>().position.y << std::endl;
+	//std::cout << ball.getComponent < TransformComponent>().position.x << " , " << ball.getComponent < TransformComponent>().position.y << std::endl;
 
 	//for (auto cc : colliders)
 	//{
@@ -149,6 +168,7 @@ void Game::render()
 	for (auto& t : tiles)
 	{
 		t->draw();
+		mapEnd ++;
 	}
 	for (auto& p : Players)
 	{
