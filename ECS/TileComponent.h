@@ -30,7 +30,7 @@ public:
 
 		srcRect.x = srcX;
 		srcRect.y = srcY;
-		srcRect.w = srcRect.h = 32;
+		srcRect.w = srcRect.h = 64;
 
 		destRect.x = xpos;
 		destRect.y = ypos;

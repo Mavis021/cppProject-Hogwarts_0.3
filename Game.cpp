@@ -16,17 +16,17 @@ bool startMapMovement = false;
 bool ballMoving = false;
 bool mapBegin = true;
 
-SDL_Texture* Game:: StartEndTexture = nullptr;
-
-SDL_Rect srcStartEnd = { 0, 0, 300,640 };
-SDL_Rect destStartEnd = { 0, 0, 300,640 };//600=800-200 for xpos of dest rect
+//SDL_Texture* Game:: StartEndTexture = nullptr;
+//
+//SDL_Rect srcStartEnd = { 0, 0, 300,640 };
+//SDL_Rect destStartEnd = { 0, 0, 300,640 };//600=800-200 for xpos of dest rect
 
 
 auto& Player(manager.addEntity());  //creating our player
 auto& Enemy(manager.addEntity());   //creating our enemy
 auto& ball(manager.addEntity());    //creating our magic ball
 
-const char* mapfile = "gameLoop/dev/map_tile.png";
+const char* mapfile = "gameLoop/dev/finalMapTile64.png";
 
 enum groupLables : std::size_t
 {
@@ -72,12 +72,12 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		map = new Map();
 		static int loop;
 		
-		for ( loop = 0; loop <2; loop++)
+		for ( loop = 0; loop <4; loop++)
 		{
-			/*if(loop==0)
+			if(loop==0||loop==3)
 				map->LoadMap("gameLoop/dev/startEnd.map", 5, 10, loop);
-			else*/
-				map->LoadMap("gameLoop/dev/pixel_16x16.map", 25, 10, loop);
+			else
+				map->LoadMap("gameLoop/dev/finalMap64.map", 25, 10, loop);
 		}
 	
 	//player
@@ -143,7 +143,7 @@ void Game::update()
 				Enemy.getComponent<SpriteComponent>().Play("Dead");
 				break;
 			}
-			else if (updateCounter >= 1500)
+			else if (updateCounter >= 1600)
 			{
 				Enemy.getComponent<TransformComponent>().velocity.x = 1;
 				break;
@@ -169,18 +169,18 @@ void Game::update()
 			Enemy.getComponent<TransformComponent>().position.y = 447;
 		}
 
-		if (tempXball == 150 && tempYball == 150)
-		{
-			ball.getComponent<TransformComponent>().position.x = 130;
-			ball.getComponent<TransformComponent>().position.y = 170;
-			ball.getComponent<TransformComponent>().velocity.x = 0;
-			ball.getComponent<TransformComponent>().velocity.y = 0;
-		}
-		else
-		{
+		//if (tempXball == 150 && tempYball == 150)
+		//{
+		//	ball.getComponent<TransformComponent>().position.x = 130;
+		//	ball.getComponent<TransformComponent>().position.y = 170;
+		//	ball.getComponent<TransformComponent>().velocity.x = 0;
+		//	ball.getComponent<TransformComponent>().velocity.y = 0;
+		//}
+		//else
+		//{
 			ball.getComponent<TransformComponent>().position.x = tempXball;
 			ball.getComponent<TransformComponent>().position.y = tempYball;
-		}
+		//}
 
 		std::cout << "returning to initial position." << std::endl;
 		
@@ -200,14 +200,15 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 
-	StartEndTexture =TextureManager::LoadTexture("gameLoop/deva/startForest.png");
-	TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
-	if (updateCounter >= 1200)
-	{
-		destStartEnd.x = 600;
-		StartEndTexture = TextureManager::LoadTexture("gameLoop/gfx/endForest.png");
-		TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
-	}
+	//StartEndTexture =TextureManager::LoadTexture("gameLoop/dev/startEndTexture.png");
+	//TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
+	//if (updateCounter >= 1300)
+	//{
+	//	std::cout << "FINAL MAP RENDER BHAHYO" << std::endl;
+	//	destStartEnd.x = 600;
+	//	StartEndTexture = TextureManager::LoadTexture("gameLoop/dev/startEndTexture.png");
+	//	TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
+	//}
 
 
 	for (auto& t : tiles)
@@ -243,7 +244,7 @@ void Game::clean()
 void Game::addTile(int srcX,int srcY, int xpos, int ypos)
 {
 	auto& tile(manager.addEntity());
-	tile.addComponent<TileComponent>(srcX,srcY,xpos+300,ypos,mapfile);
+	tile.addComponent<TileComponent>(srcX,srcY,xpos,ypos,mapfile);
 	tile.addGroup(groupMap);
 }
 
