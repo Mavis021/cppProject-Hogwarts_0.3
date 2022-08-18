@@ -5,16 +5,19 @@
 #include"ECS/Components.h"
 #include "Vector2D.h"
 #include"Collision.h"
+#include <sstream>
 
 Map* map;
 Manager manager;
+
 SDL_Renderer* Game::renderer = nullptr;            //we can reassign
 SDL_Event Game::event;
+
 std::vector<ColliderComponent*> Game::colliders;
+
 int tempXball, tempYball;
 bool startMapMovement = false;
 bool ballMoving = false;
-bool mapBegin = true;
 
 //SDL_Texture* Game:: StartEndTexture = nullptr;
 //
@@ -25,6 +28,7 @@ bool mapBegin = true;
 auto& Player(manager.addEntity());  //creating our player
 auto& Enemy(manager.addEntity());   //creating our enemy
 auto& ball(manager.addEntity());    //creating our magic ball
+auto& label(manager.addEntity());
 
 const char* mapfile = "gameLoop/dev/finalMapTile64.png";
 
@@ -69,6 +73,14 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		isRunning = true;
 	}
 	
+	if (TTF_Init() == -1)
+	{
+		std::cout << "Error : SDL_TTF" << std::endl;
+	}
+
+	//reassets->AddTexture("Player", "gameLoop/gfx/finalHarry.png");
+
+
 		map = new Map();
 		static int loop;
 		
@@ -91,6 +103,11 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	Enemy.addComponent<SpriteComponent>("gameLoop/gfx/deathEater200-200.png", true);
 	Enemy.addComponent<ColliderComponent>("Enemy");
 	Enemy.addGroup(groupEnemies);
+
+	SDL_Colour white = { 255, 255, 255, 255 };
+
+	label.addComponent<UILabel>(10, 10, "HELLO WORLD FINALLY RENDER BHAYO TEXT :KEK:", "gameLoop/dev/8514oem.fon",16, white);
+
 
 	//magicBall
 	ball.addComponent <TransformComponent>(150, 150, 200, 200, 0.16);
@@ -117,14 +134,16 @@ void Game::handleEvents()
 
 void Game::update()
 {
+	Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
+	std::stringstream sst;
+	sst << "Player velocity: " << pVel;
+	label.getComponent<UILabel>().SetLabelText(sst.str(), "gameLoop/dev/8514oem.fon",16);
+
 	manager.refresh();
 	manager.update();
 
 	if(startMapMovement==true)
 	updateCounter++;
-	//backround moving 
-	//Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
-	//int pSpeed = Player.getComponent<TransformComponent>().speed;
 
 	 //const int BGspeed= -2;
 	for (auto t : tiles)
@@ -132,10 +151,10 @@ void Game::update()
 		if (startMapMovement == true)
 		{
 			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
-			if (t->getComponent<TileComponent>().destRect.x == 0)
-			{
-				mapBegin = true;
-			}
+			//if (t->getComponent<TileComponent>().destRect.x == 0)
+			//{
+			//	mapBegin = true;
+			//}
 		}
 
 			if (Collision::hitCount >= 3)
@@ -143,7 +162,7 @@ void Game::update()
 				Enemy.getComponent<SpriteComponent>().Play("Dead");
 				break;
 			}
-			else if (updateCounter >= 1600)
+			else if (updateCounter >= 1500)
 			{
 				Enemy.getComponent<TransformComponent>().velocity.x = 1;
 				break;
@@ -200,16 +219,6 @@ void Game::render()
 {
 	SDL_RenderClear(renderer);
 
-	//StartEndTexture =TextureManager::LoadTexture("gameLoop/dev/startEndTexture.png");
-	//TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
-	//if (updateCounter >= 1300)
-	//{
-	//	std::cout << "FINAL MAP RENDER BHAHYO" << std::endl;
-	//	destStartEnd.x = 600;
-	//	StartEndTexture = TextureManager::LoadTexture("gameLoop/dev/startEndTexture.png");
-	//	TextureManager::Draw(StartEndTexture, srcStartEnd, destStartEnd, SDL_FLIP_NONE);
-	//}
-
 
 	for (auto& t : tiles)
 	{
@@ -224,13 +233,12 @@ void Game::render()
 		e->draw();
 	}
 
-	//if (check)
-	//{
 		for (auto& b : balls)
 		{
 			b->draw();
 		}
-	//}
+
+		label.draw();
 	SDL_RenderPresent(renderer);
 }
 

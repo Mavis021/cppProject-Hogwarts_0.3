@@ -8,7 +8,6 @@
 extern int tempXball, tempYball;
 extern bool startMapMovement;
 extern bool ballMoving;
-extern bool mapBegin;
 
 class KeyboardComtroller : public Component
 {
@@ -35,7 +34,7 @@ public:
 				break;
 			case SDLK_k:
 			{
-				if (startMapMovement == true && mapBegin == true)
+				if (startMapMovement == true )//&& mapBegin == true)
 				{
 					ballMoving = true;
 					if (transform->velocity.x == 0 && transform->velocity.x == 0)

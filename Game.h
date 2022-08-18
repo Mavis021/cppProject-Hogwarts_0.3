@@ -23,6 +23,7 @@ public:
 	void render();
 	void clean();
 
+	//static AssetManager* assets;
 	//static SDL_Texture* StartEndTexture;
 	int updateCounter = 0;
 	static void addTile(int srcX,int srcY, int xpos, int yos);
