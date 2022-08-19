@@ -12,20 +12,29 @@
 class UILabel : public Component
 {
 public:
-	UILabel(int xpos, int ypos, std::string text, std::string path,int fontSize, SDL_Colour& colour) :
-		labelText(text), labelFont(path),labelSize(fontSize), textColour(colour)
+	SDL_Rect position;
+	SDL_Colour white = { 255, 255, 255, 255 };
+	SDL_Colour red = { 255, 0, 0, 255 };
+
+	UILabel(int xpos, int ypos, std::string text, std::string path,int fontSize) :
+		labelText(text), labelFont(path),labelSize(fontSize)
 	{
 		position.x = xpos;
 		position.y = ypos;
 
 		SetLabelText(labelText, labelFont,labelSize);
 	}
+	UILabel(int xpos,int ypos)
+	{
+		position.x = xpos;
+		position.y = ypos;
+	}
 	~UILabel() {}
 
 
 	void SetLabelText(std::string text, std::string font,int size)
 	{
-		SDL_Surface* surf = TTF_RenderText_Blended(TTF_OpenFont(font.c_str(), size), text.c_str(), textColour);
+		SDL_Surface* surf = TTF_RenderText_Blended(TTF_OpenFont(font.c_str(), size), text.c_str(), red);
 		labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
 		SDL_FreeSurface(surf);
 
@@ -38,7 +47,7 @@ public:
 		SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);  //drawing texture
 	}
 private:
-	SDL_Rect position;
+	
 	std::string labelText;
 	std::string labelFont;
 	int labelSize;

@@ -17,6 +17,7 @@ bool Collision::AABB(const SDL_Rect& recA, const SDL_Rect& recB)
 			recB.y == recA.y + 15)
 		{
 			hitCount++;
+			
 			std::cout << "ball hit enemy" << std::endl;
 		}
 		else

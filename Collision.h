@@ -1,12 +1,14 @@
 #pragma once
 #include "SDL.h"
-
+#include "Game.h"
+#include "ECS/Components.h"
+#include "ECS/ECS.h"
+#include "ECS/UILabel.h"
 
 class ColliderComponent;
 
-class Collision
+class Collision    : public Component
 {
-
 public:
 	static int hitCount;
 	static bool AABB(const SDL_Rect& rectA,const SDL_Rect& rectB);//axis aligned bounding box

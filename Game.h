@@ -25,12 +25,14 @@ public:
 
 	//static AssetManager* assets;
 	//static SDL_Texture* StartEndTexture;
-	int updateCounter = 0;
+	static bool isComplete;
+	static int updateCounter;
+	static bool ballMoving;
 	static void addTile(int srcX,int srcY, int xpos, int yos);
 	static SDL_Renderer* renderer;
 	static SDL_Event event;
 	static std::vector<ColliderComponent*>colliders;
-
+	
 
 private:
 	bool isRunning = false;

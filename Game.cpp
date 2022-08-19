@@ -15,9 +15,11 @@ SDL_Event Game::event;
 
 std::vector<ColliderComponent*> Game::colliders;
 
-int tempXball, tempYball;
-bool startMapMovement = false;
-bool ballMoving = false;
+bool Game::isComplete = false;
+//int Collision::hitCount = 0;
+int Game::updateCounter = 0;
+bool Map::startMapMovement = false;
+bool Game::ballMoving = false;
 
 //SDL_Texture* Game:: StartEndTexture = nullptr;
 //
@@ -28,7 +30,7 @@ bool ballMoving = false;
 auto& Player(manager.addEntity());  //creating our player
 auto& Enemy(manager.addEntity());   //creating our enemy
 auto& ball(manager.addEntity());    //creating our magic ball
-auto& label(manager.addEntity());
+auto& label(manager.addEntity());   //THE TEXT LABELS
 
 const char* mapfile = "gameLoop/dev/finalMapTile64.png";
 
@@ -104,15 +106,13 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 	Enemy.addComponent<ColliderComponent>("Enemy");
 	Enemy.addGroup(groupEnemies);
 
-	SDL_Colour white = { 255, 255, 255, 255 };
-
-	label.addComponent<UILabel>(10, 10, "HELLO WORLD FINALLY RENDER BHAYO TEXT :KEK:", "gameLoop/dev/8514oem.fon",16, white);
-
+	label.addComponent<UILabel>(250, 250, "PRESS ENTER TO START ", "gameLoop/dev/8514oem.fon", 16);
+	//label.addComponent<KeyboardComtroller>();
 
 	//magicBall
 	ball.addComponent <TransformComponent>(150, 150, 200, 200, 0.16);
 	ball.addComponent<SpriteComponent>("gameloop/gfx/powerball_200.png",true);
-	ball.addComponent<KeyboardComtroller>();
+	ball.addComponent<KeyboardController>();
 	ball.addComponent<ColliderComponent>("ball");
 	ball.addGroup(groupColliders);
 }
@@ -133,28 +133,36 @@ void Game::handleEvents()
 
 
 void Game::update()
-{
-	Vector2D pVel = Player.getComponent<TransformComponent>().velocity;
+{/*
+	Vector2D pVel = Enemy.getComponent<TransformComponent>().velocity;
 	std::stringstream sst;
 	sst << "Player velocity: " << pVel;
-	label.getComponent<UILabel>().SetLabelText(sst.str(), "gameLoop/dev/8514oem.fon",16);
+	label.getComponent<UILabel>().SetLabelText(sst.str(), "gameLoop/dev/8514oem.fon",16);*/
 
 	manager.refresh();
 	manager.update();
 
-	if(startMapMovement==true)
-	updateCounter++;
-
+	if (Map::startMapMovement == true)
+	{
+		for (static bool runOnce = true; runOnce; runOnce = false)
+		{
+			label.getComponent<UILabel>().position.x = 450;
+			label.getComponent<UILabel>().position.y = 50;
+			label.getComponent<UILabel>().SetLabelText("PRESS 'K' TO KILL AND 'A' TO AIM", "gameLoop/dev/8514oem.fon", 16);
+		}
+		updateCounter++;
+	}
 	 //const int BGspeed= -2;
 	for (auto t : tiles)
 	{
-		if (startMapMovement == true)
+		if (Map::startMapMovement == true)
 		{
 			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
 			//if (t->getComponent<TileComponent>().destRect.x == 0)
 			//{
 			//	mapBegin = true;
 			//}
+			
 		}
 
 			if (Collision::hitCount >= 3)
@@ -164,6 +172,7 @@ void Game::update()
 			}
 			else if (updateCounter >= 1500)
 			{
+				Game::isComplete = true;
 				Enemy.getComponent<TransformComponent>().velocity.x = 1;
 				break;
 			}
@@ -176,34 +185,32 @@ void Game::update()
 		ball.getComponent<ColliderComponent>().collider))
 	{
 		ballMoving = false;
-
+		
 		if (Collision::hitCount == 1)
 		{
+			
 			Enemy.getComponent<TransformComponent>().position.x = 467;
 			Enemy.getComponent<TransformComponent>().position.y = 427;
+			
 		}
 		else
 		{
 			Enemy.getComponent<TransformComponent>().position.x = 447;
 			Enemy.getComponent<TransformComponent>().position.y = 447;
 		}
+		for (bool runOnce = true; runOnce; runOnce = false)
+		{
+			label.getComponent<UILabel>().position.x = 500;
+		}
 
-		//if (tempXball == 150 && tempYball == 150)
-		//{
-		//	ball.getComponent<TransformComponent>().position.x = 130;
-		//	ball.getComponent<TransformComponent>().position.y = 170;
-		//	ball.getComponent<TransformComponent>().velocity.x = 0;
-		//	ball.getComponent<TransformComponent>().velocity.y = 0;
-		//}
-		//else
-		//{
-			ball.getComponent<TransformComponent>().position.x = tempXball;
-			ball.getComponent<TransformComponent>().position.y = tempYball;
-		//}
+		std::stringstream sst;
+		sst << "TOTAL HIT REQUIRED:" <<3- Collision::hitCount;
+		label.getComponent<UILabel>().SetLabelText(sst.str(), "gameLoop/dev/8514oem.fon", 16);
+			ball.getComponent<TransformComponent>().position.x = ball.getComponent<KeyboardController>().tempXBall;
+			ball.getComponent<TransformComponent>().position.y = ball.getComponent<KeyboardController>().tempYBall;
 
 		std::cout << "returning to initial position." << std::endl;
 		
-		//ball.destroy();
 	}
 
 	//std::cout << ball.getComponent < TransformComponent>().position.x << " , " << ball.getComponent < TransformComponent>().position.y << std::endl;
