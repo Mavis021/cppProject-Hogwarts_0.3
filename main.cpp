@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Audio.h"
 
 Game *game = nullptr;
 
@@ -9,6 +10,7 @@ int main(int argc, char *argv[])
 
 	unsigned int frameStart;
 	int frameTime;
+	Audio a;
 
 	game = new Game();
 	game->init("GameWindow", 800, 640, false);
@@ -17,6 +19,7 @@ int main(int argc, char *argv[])
 	{
 		frameStart = SDL_GetTicks();
 
+		
 		game->handleEvents();
 		game->update();
 		game->render();
@@ -26,6 +29,11 @@ int main(int argc, char *argv[])
 		if (frameDelay > frameTime)
 		{
 			SDL_Delay(frameDelay - frameTime);
+		}
+
+		if (!Mix_PlayingMusic())
+		{
+			a.playMusic();
 		}
 	}
 
