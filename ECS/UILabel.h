@@ -34,7 +34,7 @@ public:
 
 	void SetLabelText(std::string text, std::string font,int size)
 	{
-		SDL_Surface* surf = TTF_RenderText_Blended(TTF_OpenFont(font.c_str(), size), text.c_str(), red);
+		SDL_Surface* surf = TTF_RenderText_Blended(TTF_OpenFont(font.c_str(), size), text.c_str(), white);
 		labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
 		SDL_FreeSurface(surf);
 

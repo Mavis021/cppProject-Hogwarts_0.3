@@ -34,7 +34,7 @@ public:
 		{
 			switch (Game::event.key.keysym.sym)
 			{
-			case SDLK_KP_ENTER:
+			case SDLK_RETURN:
 				Map::startMapMovement = true;
 				break;
 			case SDLK_k:
@@ -87,7 +87,7 @@ public:
 			{
 				switch (Game::event.key.keysym.sym)
 				{
-				case SDLK_KP_ENTER:
+				case SDLK_RETURN:
 					Map::startMapMovement = true;
 					if (transform->position.x == tempXBall + 3 && transform->position.y == tempYBall + 3)
 					{

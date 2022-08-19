@@ -4,6 +4,7 @@
 #include "ECS/Components.h"
 #include "ECS/ECS.h"
 #include "ECS/UILabel.h"
+#include "Audio.h"
 
 class ColliderComponent;
 

@@ -14,26 +14,19 @@ public:
 	Audio(){}
 	Audio(std::string bgm,std::string se):bgpath(bgm),sepath(se)
 	{
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			std::cout << "error:" << Mix_GetError() << std::endl;
 		backgroundMusic = Mix_LoadMUS(bgpath.c_str());
 		soundEffect = Mix_LoadWAV(sepath.c_str());
 	}
+	Audio(std::string bgm) :bgpath(bgm)
+	{
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			std::cout << "error:" << Mix_GetError() << std::endl;
+		backgroundMusic = Mix_LoadMUS(bgpath.c_str());
+	}
 	~Audio()
 	{}
-
-	//void SetAudio(std::string mp3,std::string wav)
-	//{
-	//	backgroundMusic = Mix_LoadMUS(mp3.c_str());
-	//	soundEffect = Mix_LoadWAV(wav.c_str());
-	//}
-
-	//void ChangeSoundEffects(std::string wav)
-	//{
-	//	soundEffect = Mix_LoadWAV(wav.c_str());
-	//}
-	//void ChangeBackgroundMusic(std::string mp3)
-	//{
-	//	backgroundMusic = Mix_LoadMUS(mp3.c_str());
-	//}
 	void playMusic()
 	{
 		Mix_PlayMusic(backgroundMusic, -1);
@@ -43,14 +36,22 @@ public:
 		backgroundMusic = Mix_LoadMUS(bgpath.c_str());
 		Mix_PlayMusic(backgroundMusic, -1);
 	}
+	void freeMusic()
+	{
+		Mix_FreeMusic(backgroundMusic);
+	}
 	void playEffects()
 	{
-		Mix_PlayChannel(-1, soundEffect, 0);
+		Mix_PlayChannel(2, soundEffect, 0);
 	}
 	void playEffects(std::string wav)
 	{
 		soundEffect = Mix_LoadWAV(wav.c_str());
-		Mix_PlayChannel(-1, soundEffect, 0);
+		Mix_PlayChannel(2, soundEffect, 0);
+	}
+	void pauseMusic()
+	{
+	 Mix_HaltMusic();
 	}
 };
 

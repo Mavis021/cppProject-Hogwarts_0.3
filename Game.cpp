@@ -73,8 +73,7 @@ void Game::init(const char* title, int width, int height, bool fullscreen)
 		{
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0 , 0);
 		}
-		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-			std::cout << "error:" << Mix_GetError() << std::endl;
+
 		isRunning = true;
 	}
 	
@@ -152,23 +151,18 @@ void Game::update()
 	{
 		for (static bool runOnce = true; runOnce; runOnce = false)
 		{
-			label.getComponent<UILabel>().position.x = 450;
+			label.getComponent<UILabel>().position.x = 500;
 			label.getComponent<UILabel>().position.y = 50;
-			label.getComponent<UILabel>().SetLabelText("PRESS 'K' TO KILL AND 'A' TO AIM", "gameLoop/dev/8514oem.fon", 16);
+			label.getComponent<UILabel>().SetLabelText("HITS REQUIRED:3", "gameLoop/dev/8514oem.fon", 16);
+			//label.getComponent<UILabel>().SetLabelText("", "gameLoop/dev/8514oem.fon", 16);
 		}
 		updateCounter++;
 	}
-	 //const int BGspeed= -2;
 	for (auto t : tiles)
 	{
 		if (Map::startMapMovement == true)
 		{
-			t->getComponent<TileComponent>().destRect.x += -2;//-(pVel.x * pSpeed);
-			//if (t->getComponent<TileComponent>().destRect.x == 0)
-			//{
-			//	mapBegin = true;
-			//}
-			
+			t->getComponent<TileComponent>().destRect.x += -2;
 		}
 
 			if (Collision::hitCount >= 3)
@@ -176,9 +170,14 @@ void Game::update()
 				Enemy.getComponent<SpriteComponent>().Play("Dead");
 				break;
 			}
-			else if (updateCounter >= 1500)
+			else if (updateCounter >= 1500)   //lose game
 			{
 				Game::isComplete = true;
+				for (static bool runOnce = true; runOnce; runOnce = false)
+				{
+					Sound.getComponent<Audio>().playEffects("gameLoop/effects/enemyRunAway.wav");
+					Sound.getComponent<Audio>().playEffects("gameLoop/effects/loseGame.wav");
+				}
 				Enemy.getComponent<TransformComponent>().velocity.x = 1;
 				break;
 			}
@@ -194,24 +193,16 @@ void Game::update()
 		
 		if (Collision::hitCount == 1)
 		{
-			
 			Enemy.getComponent<TransformComponent>().position.x = 467;
-			Enemy.getComponent<TransformComponent>().position.y = 427;
-			Sound.getComponent<Audio>().playEffects("gameLoop/effects/clickSound.wav");    //-1 plays the effect in available channel.... 0 is for no loop
+			Enemy.getComponent<TransformComponent>().position.y = 427;   
 		}
 		else
 		{
 			Enemy.getComponent<TransformComponent>().position.x = 447;
 			Enemy.getComponent<TransformComponent>().position.y = 447;
-			Sound.getComponent<Audio>().playEffects("gameLoop/effects/clickSound.wav");
 		}
-		for (bool runOnce = true; runOnce; runOnce = false)
-		{
-			label.getComponent<UILabel>().position.x = 500;
-		}
-
 		std::stringstream sst;
-		sst << "TOTAL HIT REQUIRED:" <<3- Collision::hitCount;
+		sst << "HITS REQUIRED:" <<3- Collision::hitCount;
 		label.getComponent<UILabel>().SetLabelText(sst.str(), "gameLoop/dev/8514oem.fon", 16);
 			ball.getComponent<TransformComponent>().position.x = ball.getComponent<KeyboardController>().tempXBall;
 			ball.getComponent<TransformComponent>().position.y = ball.getComponent<KeyboardController>().tempYBall;
@@ -220,18 +211,26 @@ void Game::update()
 				isComplete = true;
 				ball.getComponent<TransformComponent>().velocity.x=0;
 				ball.getComponent<TransformComponent>().velocity.y =0;
+				Sound.getComponent<Audio>().playEffects("gameLoop/effects/gameLevelComplete.wav");
 			}
 
 		std::cout << "returning to initial position." << std::endl;
 		
 	}
 
-	//std::cout << ball.getComponent < TransformComponent>().position.x << " , " << ball.getComponent < TransformComponent>().position.y << std::endl;
-
-	//for (auto cc : colliders)
-	//{
-	//	Collision::AABB(Player.getComponent<ColliderComponent>(), *cc);
-	//}
+	if (isComplete == true)
+	{
+		
+		for (static bool runOnce = true; runOnce; runOnce = false)
+		{
+			//Sound.getComponent<Audio>().pauseMusic();
+			Sound.getComponent<Audio>().freeMusic();
+			Sound.addComponent<Audio>("gameLoop/effects/hedwigsTheme8-bit.mp3");
+			label.getComponent<UILabel>().SetLabelText("", "gameLoop/dev/8514oem.fon", 16);
+			
+			//Sound.getComponent<Audio>().playEffects("gameLoop/effects/loseSound.wav");
+		}
+	}
 }
 
 
@@ -284,11 +283,3 @@ void Game::addTile(int srcX,int srcY, int xpos, int ypos)
 	tile.addComponent<TileComponent>(srcX,srcY,xpos,ypos,mapfile);
 	tile.addGroup(groupMap);
 }
-
-//single tile component system
-//void Game::addTile(int id, int x, int y)
-//{
-//	auto& tile(manager.addEntity());
-//	tile.addComponent<TileComponent>(x,y,64,64,id);
-//	tile.addGroup(groupMap);
-//}
