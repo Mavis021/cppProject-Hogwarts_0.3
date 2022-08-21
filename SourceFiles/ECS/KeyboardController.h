@@ -37,7 +37,7 @@ public:
 			case SDLK_RETURN:
 				Map::startMapMovement = true;
 				break;
-			case SDLK_k:
+			case SDLK_h:
 			{
 				if (Map::startMapMovement == true )//&& mapBegin == true)
 				{
@@ -50,10 +50,10 @@ public:
 					transform->velocity.x = 1;
 
 						sprite->Play("Move");
-						break;
-					}
 				}
-				case SDLK_a:
+				break;
+				}
+				case SDLK_SPACE:
 				{
 					if (Map::startMapMovement == true && Game::ballMoving == false)
 					{
@@ -76,8 +76,8 @@ public:
 						}
 
 						sprite->Play("Idle");
-						break;
 					}
+					break;
 				}
 				default:
 					break;
@@ -97,8 +97,7 @@ public:
 						sprite->Play("Idle");
 					}
 					break;
-					break;
-				case SDLK_k:
+				case SDLK_h:
 				{
 					if (Map::startMapMovement == true)
 					{
@@ -109,10 +108,10 @@ public:
 							pressCount = 0;
 							sprite->Play("Idle");
 						}
-						break;
 					}
+					break;
 				}
-				case SDLK_a:
+				case SDLK_SPACE:
 				{
 
 					if (Map::startMapMovement == true && Game::ballMoving == false)
@@ -120,8 +119,8 @@ public:
 						transform->velocity.y = 0;
 						transform->velocity.x = 0;
 						sprite->Play("Idle");
-						break;
 					}
+					break;
 				}
 				default:
 					break;

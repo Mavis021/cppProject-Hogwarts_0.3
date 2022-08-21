@@ -11,6 +11,7 @@ private:
 public:
 	static Mix_Music* backgroundMusic;
 	static Mix_Chunk* soundEffect;
+
 	Audio(){}
 	Audio(std::string bgm,std::string se):bgpath(bgm),sepath(se)
 	{
@@ -25,8 +26,15 @@ public:
 			std::cout << "error:" << Mix_GetError() << std::endl;
 		backgroundMusic = Mix_LoadMUS(bgpath.c_str());
 	}
+	Audio(Mix_Music* musicPlayer, std::string path)
+	{
+		if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			std::cout << "error:" << Mix_GetError() << std::endl;
+		musicPlayer = Mix_LoadMUS(path.c_str());
+	}
 	~Audio()
-	{}
+	{
+	}
 	void playMusic()
 	{
 		Mix_PlayMusic(backgroundMusic, -1);
@@ -42,16 +50,20 @@ public:
 	}
 	void playEffects()
 	{
-		Mix_PlayChannel(2, soundEffect, 0);
+		Mix_PlayChannel(-1, soundEffect, 0);
 	}
 	void playEffects(std::string wav)
 	{
 		soundEffect = Mix_LoadWAV(wav.c_str());
-		Mix_PlayChannel(2, soundEffect, 0);
+		Mix_PlayChannel(-1, soundEffect, 0);
 	}
 	void pauseMusic()
 	{
 	 Mix_HaltMusic();
+	}
+	void quit()
+	{
+		Mix_Quit();
 	}
 };
 

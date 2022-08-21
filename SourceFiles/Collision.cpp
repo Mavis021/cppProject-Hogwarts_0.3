@@ -5,10 +5,6 @@ int Collision::hitCount = 0;
 bool Collision::AABB(const SDL_Rect& recA, const SDL_Rect& recB)
 {
 	if (
-		//recA.x + recA.w >= recB.x &&
-		//recA.x + recB.w >= recA.x &&
-		//recA.y + recA.h >= recB.y &&
-		//recB.y + recB.h >= recA.y
 	recB.x >= recA.x +15 &&
 		 recB.y >= recA.y +15
 		)
@@ -18,13 +14,13 @@ bool Collision::AABB(const SDL_Rect& recA, const SDL_Rect& recB)
 		{
 			Audio a;
 			hitCount++;
-			if(hitCount != 3)
+			if(hitCount != 5)
 			a.playEffects("gameLoop/effects/ouch.wav");
 
-			std::cout << "ball hit enemy" << std::endl;
+			std::cout << "HIT" << std::endl;
 		}
 		else
-		std::cout << "ball le hit bhaena" << std::endl;
+		std::cout << "MISS" << std::endl;
 		return true;
 	}
 	return false;

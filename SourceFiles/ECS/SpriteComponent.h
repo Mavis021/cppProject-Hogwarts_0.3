@@ -35,16 +35,17 @@ public:
 	{
 		animated = isAnimated;
 
-		Animation idle = Animation(0, 4, 100);
-		Animation move = Animation(1, 4, 100);
-		Animation dead = Animation(2, 4, 100);
+			Animation idle = Animation(0, 4, 100);
+			Animation move = Animation(1, 4, 100);
+			Animation dead = Animation(2, 4, 100);
 
-		animations.emplace("Idle", idle);
-		animations.emplace("Move", move);
-		animations.emplace("Dead", dead);
+			animations.emplace("Idle", idle);
+			animations.emplace("Move", move);
+			animations.emplace("Dead", dead);
 
-		Play("Idle");
-		setText(path);
+			Play("Idle");
+			setText(path);
+	
 	}
 
 	~SpriteComponent()
@@ -70,8 +71,13 @@ public:
 		if (animated)
 		{
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
-		}
 			srcRect.y = animIndex * Transform->height;
+		}
+		else
+		{
+			srcRect.x = 0;
+			srcRect.y = 0;
+		}
 
 		destRect.x = static_cast<int>(Transform->position.x);
 		destRect.y = static_cast<int>(Transform->position.y);
