@@ -6,16 +6,12 @@
 #include "Components.h"
 #include "collision.h"
 
-//#include <sstream>
 class KeyboardController : public Component
 {
-//private:
-//	std::stringstream sst;
 public:
 	int tempXBall, tempYBall;
 	TransformComponent* transform;
 	SpriteComponent* sprite;
-	//UILabel* text;
 
 	int pressCount=0;
 	
@@ -23,7 +19,6 @@ public:
 	{
 		transform = &entity->getComponent<TransformComponent>();
 		sprite = &entity->getComponent<SpriteComponent>();
-		//text = &entity->getComponent<UILabel>();
 	}
 
 	void update() override

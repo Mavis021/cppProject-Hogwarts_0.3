@@ -1,18 +1,19 @@
 #include "dashboard.h"
 #include"textureManager.h"
+#include "GameObject.h"
 #include"Button.h"
 #include<cstdlib>
 
 
 SDL_Event Dashboard::dashEvent;
-SDL_Texture* Dashboard::dashTexture = nullptr;
-SDL_Rect srcRect = { 0, 0, 800, 640 };
-SDL_Rect destRect = { 0, 0, 800, 640 };
 
 SDL_Texture* Dashboard::mouseTexture = nullptr;
 SDL_Rect srcmouse = { NULL,NULL,64,64 };
 SDL_Rect destmouse = { NULL,NULL,32,32};
 Button* buttonArray;
+
+GameObject* dashTex;
+ 
 
 Dashboard::Dashboard()
 {}
@@ -37,6 +38,7 @@ void Dashboard::dashInit(const char* title, int width, int height, bool fullscre
         isDashRunning = true;
     }
 
+    dashTex = new GameObject("gameLoop/dev/dashboard-min.png", 0, 0, 640, 800);
 
     SDL_ShowCursor(false);
     buttonArray = new Button[6];
@@ -62,14 +64,14 @@ void Dashboard::dashHandleEvents()
 }
 void Dashboard::dashUpdate()
 {
+    dashTex->Update();
     SDL_GetMouseState(&destmouse.x, &destmouse.y);
 }
 void Dashboard::dashRender()
 {
     SDL_RenderClear(Game::renderer);
-    SDL_Surface* tempSurface = IMG_Load("gameLoop/dev/dashboard-min.png");
-    dashTexture = SDL_CreateTextureFromSurface(Game::renderer, tempSurface);
-    SDL_RenderCopyEx(Game::renderer, dashTexture, &srcRect, &destRect, NULL, NULL, SDL_FLIP_NONE);
+    dashTex->Render();
+
     if (buttonArray[0].isSelected == false)
         buttonArray[0].displayButton();
     else
@@ -93,8 +95,9 @@ void Dashboard::dashRender()
 void Dashboard::dashClean()
 {
     delete[] buttonArray;
-    SDL_DestroyWindow(dashWindow);
+    dashTex->clear();
     SDL_DestroyRenderer(Game::renderer);
+    SDL_DestroyWindow(dashWindow);
     SDL_Quit();
 }
 
