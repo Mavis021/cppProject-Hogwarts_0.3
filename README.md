@@ -8,7 +8,7 @@ PLACE IT IN THE PROJECT DIRECTORY OR ANY OTHER DESIRED DIRECTORIES
 
 IN MICROSOFT VISUAL STUDIO  
   Include the Hogwarts_0.3 folder in the project.  
-  Open the project properties and set to All Platforms   
+  Select project properties and set to All Platforms   
   Place the include files of all the above SDL folders as additional include files in the project properties (C/C++).    
   Include additional library directories in the linker section of project properties.  
   Add the additional Dependencies: Name of the .lib files of all the above mentioned SDL directories.  
